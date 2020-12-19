@@ -10,8 +10,16 @@ import pandas as pd
 from pymongo import MongoClient
 
 
-def get_mongo_client(uri):
-    """This function gets and returns a MongoClient object."""
+def get_mongo_client(uri=None, env_var=None):
+    """This function gets and returns a MongoClient object.
+
+    Supply the uri environment variable name to use env_var to get the uri.
+    """
+    if env_var:
+        uri = os.getenv(env_var, uri)
+    if not uri:
+        raise ValueError('You must supply a valid uri string using either the `uri` or `env_var` argument.')
+
     return MongoClient(uri)
 
 

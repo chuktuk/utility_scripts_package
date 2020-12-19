@@ -28,7 +28,7 @@ setuptools.setup(
     description='Utility Scripts for Simplifying App Development',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/chuktuk/Libraries-and-Resources/utility_scripts_package',
+    url='https://github.com/chuktuk/utility_scripts_package',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -39,6 +39,7 @@ setuptools.setup(
     install_requires=[
         'dash',
         'dash-bootstrap-components',
+        'python-dotenv',
         'jaydebeapi',
         'pandas',
         'paramiko',

@@ -13,3 +13,11 @@
     <li><code>log.py</code> objects for logging operations.</li>
   </ul>
 </div>
+<hr>
+
+<div>
+<h3>Optional Environment Variable Support</h3>
+<p>Suggested use of environment variables is using a <code>.env</code> file. See 
+<a href="https://pypi.org/project/python-dotenv/">python-dotenv</a> on <a href="pypi.org">pypi.org</a> for more info. 
+See module documentation for a list of built-in environment variables.</p>
+</div>

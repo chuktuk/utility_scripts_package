@@ -3,6 +3,16 @@
 
 """Utility scripts package. This package contains useful utility scripts separated into modules by functionality.
 
+.env support:
+    To utilize .env files for loading environment variables, if .env is in the working directory run:
+
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    optionally specifying a path to the .env file using:
+    load_dotenv(dotenv_path='path/to/.env')
+
+
 Modules:
 
     dbase.py
@@ -22,6 +32,8 @@ Modules:
 # usage: import utility_scripts as us
 # then call objects as us.Mail() etc.
 
+import os
+
 # import all dbase, fsconn, and log
 from .dbase import *
 from .fsconn import *
@@ -29,7 +41,6 @@ from .log import *
 
 # only import the Mail class from email
 from .email import Mail
-
 
 # also allow each module to be import explicitly
 # usage: from utility_scripts import email
