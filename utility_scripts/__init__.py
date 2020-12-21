@@ -15,6 +15,9 @@
 
 Modules:
 
+    dash_tools.py
+        - Objects associated with Dash app development.
+
     dbase.py
         - Objects associated with database connections.
 
@@ -34,7 +37,8 @@ Modules:
 
 import os
 
-# import all dbase, fsconn, and log
+# import all dash_tools, dbase, fsconn, and log
+from .dash_tools import *
 from .dbase import *
 from .fsconn import *
 from .log import *
@@ -44,6 +48,7 @@ from .email import Mail
 
 # also allow each module to be import explicitly
 # usage: from utility_scripts import email
+import utility_scripts.dash_tools
 import utility_scripts.dbase
 import utility_scripts.email
 import utility_scripts.fsconn
