@@ -27,7 +27,7 @@ See module documentation for a list of built-in environment variables.</p>
 <div>
 <h3>To Run Unit Tests</h3>
 <p>Run the following command from the <code>/utility_scripts_package</code> directory (substitute <code>python</code> 
-for <code>python3</code> on windows.</p>
+for <code>python3</code> on windows).</p>
 <p><code>python3 -m unittest discover -v tests</code></p>
 </div>
 <hr>
