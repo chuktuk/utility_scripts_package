@@ -10,9 +10,8 @@ import pandas as pd
 from pymongo import MongoClient
 
 
-def get_mongo_client(uri=None, env_var=None):
+def get_mongo_client(uri=None, env_var=None, timeout=None):
     """This function gets and returns a MongoClient object.
-
     Supply the uri environment variable name to use env_var to get the uri.
     """
     if env_var:
@@ -20,17 +19,7 @@ def get_mongo_client(uri=None, env_var=None):
     if not uri:
         raise ValueError('You must supply a valid uri string using either the `uri` or `env_var` argument.')
 
-    return MongoClient(uri)
-
-
-def get_mongo_database(client, db):
-    """Get and return a Mongo database using a MongoClient object."""
-    return client[db]
-
-
-def get_mongo_collection(db, collection):
-    """Get and return a Mongo collection using a Mongo database object."""
-    return db[collection]
+    return MongoClient(uri, maxIdleTimeMS=timeout)
 
 
 def insert_into_mongo(data, collection):
@@ -41,9 +30,9 @@ def insert_into_mongo(data, collection):
     :return: returns a result object.
     """
 
-    if type(data) == dict:
+    if isinstance(data, dict):
         result = collection.insert_one(data)
-    elif type(data) == list:
+    elif isinstance(data, list):
         result = collection.insert_many(data)
     else:
         raise TypeError('data must be a dictionary or a list of dictionaries.')
@@ -112,11 +101,6 @@ def upsert_into_mongo(data, unique_id, collection):
     return deleted_records, delete_result, insert_result
 
 
-def close_mongo_client(client):
-    """Close the connection to Mongo db."""
-    client.close()
-
-
 class OBIEEConnection:
     """OBIEE connection object.
 
@@ -163,17 +147,17 @@ class OBIEEConnection:
 
     @property
     def driver_args(self):
-        return self.__driver_args
+        return 'Protected Data'
 
     @driver_args.setter
     def driver_args(self, value):
         check_types = all(
             [
-                type(value) == dict,
-                all([type(i) == str for i in list(value.values())])
+                isinstance(value, dict),
+                all([isinstance(i, str) for i in list(value.values())])
             ]
         )
-        if type(value) == dict and list(value) == ['user', 'password'] and check_types:
+        if isinstance(value, dict) and list(value) == ['user', 'password'] and check_types:
             self.__driver_args = value
         else:
             raise TypeError('driver_args must be a dictionary with string values for "user" and "password".')

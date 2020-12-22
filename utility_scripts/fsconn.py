@@ -28,13 +28,16 @@ class FSConnection:
 
     @keyfilepath.setter
     def keyfilepath(self, value):
-        if os.path.exists(value):
-            if os.path.isfile(value):
-                self.__keyfilepath = value
+        if isinstance(value, str):
+            if os.path.exists(value):
+                if os.path.isfile(value):
+                    self.__keyfilepath = value
+                else:
+                    raise FileNotFoundError(f'File {value} not found at specified path.')
             else:
-                raise FileNotFoundError(f'File {value} not found at specified path.')
+                raise FileNotFoundError(f'Unable to locate key file path. Current working directory is {os.getcwd()}.')
         else:
-            raise FileNotFoundError(f'Unable to locate key file path. Current working directory is {os.getcwd()}.')
+            raise TypeError('keyfilepath must be a string providing the path to the private key file.')
 
     @property
     def host(self):
@@ -42,7 +45,7 @@ class FSConnection:
 
     @host.setter
     def host(self, value):
-        if type(value) == str:
+        if isinstance(value, str):
             self.__host = value
         else:
             raise TypeError('The "host" attribute must be a string.')
@@ -53,7 +56,7 @@ class FSConnection:
 
     @username.setter
     def username(self, value):
-        if type(value) == str:
+        if isinstance(value, str):
             self.__username = value
         else:
             raise TypeError('The "username" attribute must be a string.')
@@ -64,12 +67,12 @@ class FSConnection:
 
     @port.setter
     def port(self, value):
-        if type(value) == int:
+        if isinstance(value, int):
             self.__port = value
         else:
-            raise ValueError('The "port" attribute must be an integer. Have you tried 22?')
+            raise TypeError('The "port" attribute must be an integer. Have you tried 22?')
 
-    def get_rsa_key(self):
+    def set_rsa_key(self):
         if self.__keyfilepath:
             if os.path.exists(self.__keyfilepath):
                 if os.path.isfile(self.__keyfilepath):
@@ -83,11 +86,16 @@ class FSConnection:
 
     def get_sftp(self):
         if self.__key:
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh_client.connect(hostname=self.__host, username=self.__username, pkey=self.__key)
-            ftp_client = ssh_client.open_sftp()
+            if isinstance(self.__key, paramiko.rsakey.RSAKey):
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(hostname=self.__host, username=self.__username, pkey=self.__key)
+                ftp_client = ssh_client.open_sftp()
+            else:
+                raise TypeError('The rsa key must be properly set to call .get_sftp(). Did you set the keyfilepath '
+                                'attribute and call .set_rsa_key()?')
         else:
-            raise AttributeError('Please set the "keyfilepath" attribute with the path to the SSH private key.')
+            raise AttributeError('Please set the "keyfilepath" attribute with the path to the SSH private key then '
+                                 'call the .set_rsa_key() method before calling .get_sftp().')
 
         return ftp_client

@@ -45,6 +45,7 @@ Uses:
 
 import logging
 import re
+import os
 
 
 # create file logger
@@ -168,12 +169,13 @@ def process_log_for_errors(log_file, level='CRITICAL'):
 
 
 # shutdown logging
-def shutdown_logging():
-    """Call this function to end logging once the app is complete."""
+def shutdown_logging(logger):
+    """Call this function to end logging once the app is complete.
 
-    # get the root file logger
-    logger = logging.getLogger()
+    :param logger: The file logger object.
+    """
 
+    # remove the file handler
     fh = logger.handlers[0]
 
     # remove the file handler

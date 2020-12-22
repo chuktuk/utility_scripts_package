@@ -59,12 +59,12 @@ class DashDF(DataFrame):
     # convert percent method
     def convert_percent(self, column_names):
         cols = self.columns
-        if type(column_names) == str:
+        if isinstance(column_names, str):
             if column_names in cols:
                 self[column_names] = self[column_names].apply(lambda x: '{:.2f} %'.format(x))
             else:
                 raise KeyError(f'{column_names} not found in dataframe columns.')
-        elif type(column_names) == list:
+        elif isinstance(column_names, list):
             for column in column_names:
                 if column in cols:
                     self[column] = self[column].apply(lambda x: '{:.2f} %'.format(x))

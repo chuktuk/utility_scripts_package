@@ -39,13 +39,18 @@ class InvalidEmailFormatError(Error):
 def validate_email(email_address):
     """This function returns True if an email is valid and False if it isn't."""
 
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    # for custom mails use: '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$
+    if isinstance(email_address, str):
 
-    if re.search(regex, email_address):
-        return True
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        # for custom mails use: '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$
+
+        if re.search(regex, email_address):
+            return True
+        else:
+            return False
+
     else:
-        return False
+        raise TypeError('Email addresses must be strings.')
 
 
 class Mail:
@@ -63,7 +68,7 @@ class Mail:
             The SMTP email host to send the email.
 
         __password:
-            Optional): The password if needed for TLS protocol.
+            (Optional): The password if needed for TLS protocol.
 
         __port:
             Default 25: The port for the SMTP host.
@@ -93,16 +98,17 @@ class Mail:
     """
 
     def __init__(self):
+
         self.__sender = os.getenv('MAIL_SENDER')
         self.__recipient = os.getenv('MAIL_RECIPIENT')
         self.__body = os.getenv('MAIL_BODY')
         self.__port = os.getenv('MAIL_PORT', 25)
-        self.__attachment = os.getenv('MAIL_ATTACHMENT')
         self.__password = os.getenv('MAIL_PASSWORD')
         self.__subject = os.getenv('MAIL_SUBJECT')
-        self.host = os.getenv('MAIL_SERVER')
-        self.username = os.getenv('MAIL_USERNAME')
-        self.tls = os.getenv('MAIL_TLS', False)
+        self.__attachment = None
+        self.__host = os.getenv('MAIL_SERVER')
+        self.__username = os.getenv('MAIL_USERNAME')
+        self.__tls = os.getenv('MAIL_TLS', False)
 
     # define protected properties
     # sender property
@@ -136,7 +142,7 @@ class Mail:
 
     @body.setter
     def body(self, value):
-        if type(value) == str:
+        if isinstance(value, str):
             self.__body = value
         else:
             raise TypeError('Email body must be a string.')
@@ -148,7 +154,7 @@ class Mail:
 
     @port.setter
     def port(self, value):
-        if type(value) == int:
+        if isinstance(value, int):
             self.__port = value
         else:
             raise TypeError(f'Port number must be an integer. You entered {value}.')
@@ -160,13 +166,27 @@ class Mail:
 
     @attachment.setter
     def attachment(self, value):
-        if os.path.exists(value):
-            if os.path.isfile(value):
-                self.__attachment = value
+        if isinstance(value, str):
+            if os.path.exists(value):
+                if os.path.isfile(value):
+                    self.__attachment = value
+                else:
+                    raise FileNotFoundError(f'File {value} not found at specified path.')
             else:
-                raise FileNotFoundError(f'File {value} not found at specified path.')
+                raise FileNotFoundError(f'Unable to locate path. Current working directory is {os.getcwd()}.')
         else:
-            raise FileNotFoundError(f'Unable to locate path. Current working directory is {os.getcwd()}.')
+            raise TypeError('attachment must be a string file path.')
+
+    @property
+    def username(self):
+        return self.__username
+
+    @username.setter
+    def username(self, value):
+        if isinstance(value, str):
+            self.__username = value
+        else:
+            raise TypeError('username must be a string')
 
     @property
     def password(self):
@@ -174,7 +194,10 @@ class Mail:
 
     @password.setter
     def password(self, value):
-        self.__password = value
+        if isinstance(value, str):
+            self.__password = value
+        else:
+            raise TypeError('password must be a string')
 
     # subject property
     @property
@@ -183,10 +206,34 @@ class Mail:
 
     @subject.setter
     def subject(self, value):
-        if type(value) == str:
+        if isinstance(value, str):
             self.__subject = value
         else:
-            raise TypeError('Subject must be a string.')
+            raise TypeError('subject must be a string')
+
+    # host property
+    @property
+    def host(self):
+        return self.__host
+
+    @host.setter
+    def host(self, value):
+        if isinstance(value, str):
+            self.__host = value
+        else:
+            raise TypeError('host must be a string')
+
+    # tls property
+    @property
+    def tls(self):
+        return self.__tls
+
+    @tls.setter
+    def tls(self, value):
+        if isinstance(value, bool):
+            self.__tls = value
+        else:
+            raise TypeError('tls must be boolean')
 
     # send mail method
     def send_mail(self):
@@ -194,12 +241,28 @@ class Mail:
 
         Sends an SMTP email using the defined attributes of the mail object."""
 
+        if not self.__sender:
+            raise AttributeError('The "sender" attribute must be set to send an email.')
+        if not self.__recipient:
+            raise AttributeError('The "recipient" attribute must be set to send an email.')
+        if not self.__subject:
+            raise AttributeError('The "subject" attribute must be set to send an email.')
+        if not self.__body:
+            raise AttributeError('The "body" attribute must be set to send an email.')
+        if not self.__host:
+            raise AttributeError('The "host" attribute must be set to send an email.')
+        if not self.__port:
+            raise AttributeError('The "port" attribute must be set to send an email.')
+        if self.__tls:
+            if not self.__username or not self.__password:
+                raise AttributeError('The "username" and "password" attributes must be set to send TLS emails.')
+
         # define the message
         message = MIMEMultipart()
         message['From'] = self.__sender
         message['To'] = self.__recipient
-        message['Subject'] = self.subject
-        message.attach(MIMEText(self.body, 'plain'))
+        message['Subject'] = self.__subject
+        message.attach(MIMEText(self.__body, 'plain'))
 
         # format and set the attachment if present
         if self.__attachment:
@@ -220,9 +283,14 @@ class Mail:
                 payload.add_header('Content-Disposition', 'attachment', filename=filename)
                 message.attach(payload)
 
-        with smtplib.SMTP(self.host, self.__port) as smtp:
+        with smtplib.SMTP(self.__host, self.__port) as smtp:
             if self.tls:
+                if not self.__username or not self.__password:
+                    raise AttributeError(
+                        'The "username" and "password" attributes must be set to send TLS emails.')
                 smtp.starttls()
-                smtp.login(self.username, self.__password)
+                smtp.login(self.__username, self.__password)
             text = message.as_string()
             smtp.sendmail(self.__sender, self.__recipient, text)
+            smtp.close()
+            smtp.quit()

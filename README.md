@@ -12,6 +12,7 @@
     <li><code>fsconn.py</code> objects for fileserver connections.</li>
     <li><code>log.py</code> objects for logging operations.</li>
   </ul>
+<p>See <code>setup.py</code> for packing and installing steps.</p>
 </div>
 <hr>
 
@@ -21,3 +22,12 @@
 <a href="https://pypi.org/project/python-dotenv/">python-dotenv</a> on <a href="pypi.org">pypi.org</a> for more info. 
 See module documentation for a list of built-in environment variables.</p>
 </div>
+<hr>
+
+<div>
+<h3>To Run Unit Tests</h3>
+<p>Run the following command from the <code>/utility_scripts_package</code> directory (substitute <code>python</code> 
+for <code>python3</code> on windows.</p>
+<p><code>python3 -m unittest discover -v tests</code></p>
+</div>
+<hr>

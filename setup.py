@@ -24,11 +24,12 @@ setuptools.setup(
     name='utility_scripts',
     version='1.0.0',
     author='Chuck Tucker',
-    author_email='',
+    author_email='chuck.tucker@santeecooper.com',
     description='Utility Scripts for Simplifying App Development',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/chuktuk/utility_scripts_package',
+    url='https://gitlab.santeecooper.com/database-mgmt-analytics/analytics/notes_and_resources/python_packages'
+        '/utility_scripts ',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -43,6 +44,7 @@ setuptools.setup(
         'jaydebeapi',
         'pandas',
         'paramiko',
-        'pymongo'
+        'pymongo',
+        'pytest'
     ]
 )

@@ -12,11 +12,10 @@
     optionally specifying a path to the .env file using:
     load_dotenv(dotenv_path='path/to/.env')
 
-
 Modules:
 
     dash_tools.py
-        - Objects associated with Dash app development.
+        - Objects assocaiated with Dash app development.
 
     dbase.py
         - Objects associated with database connections.
@@ -35,8 +34,6 @@ Modules:
 # usage: import utility_scripts as us
 # then call objects as us.Mail() etc.
 
-import os
-
 # import all dash_tools, dbase, fsconn, and log
 from .dash_tools import *
 from .dbase import *
@@ -45,6 +42,7 @@ from .log import *
 
 # only import the Mail class from email
 from .email import Mail
+
 
 # also allow each module to be import explicitly
 # usage: from utility_scripts import email
