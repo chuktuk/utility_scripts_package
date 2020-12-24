@@ -24,12 +24,11 @@ setuptools.setup(
     name='utility_scripts',
     version='1.0.0',
     author='Chuck Tucker',
-    author_email='chuck.tucker@santeecooper.com',
+    author_email='',
     description='Utility Scripts for Simplifying App Development',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://gitlab.santeecooper.com/database-mgmt-analytics/analytics/notes_and_resources/python_packages'
-        '/utility_scripts ',
+    url='https://github.com/chuktuk/utility_scripts_package',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
