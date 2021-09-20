@@ -203,7 +203,7 @@ class DashDF(DataFrame, ABC):
         return table
 
     # get interactive dash table
-    def get_interactive_dash_table(self, cell_width='150px', page_size=10, sort_cols=None, ascending=True):
+    def get_interactive_dash_table(self, cell_width='150px', page_size=10, sort_cols=None, ascending=True, export='csv'):
 
         if sort_cols:
             data = self.sort_values(sort_cols, ascending=ascending).to_dict('records')
@@ -235,6 +235,9 @@ class DashDF(DataFrame, ABC):
             # define filter and sort behavior
             filter_action='native',
             sort_action='native',
+
+            # export options, pass export=None to disable this
+            export_format=export,
 
             # define table layout
             # style_cell={'minWidth': cell_width,
